@@ -19,10 +19,10 @@ In scope:
   part of this format. An exhibit can target more than one ruleset at
   once (e.g. the same physical exhibit competes under both FIP and APS).
   `subclass` lives *inside* each ruleset reference, not at the exhibit
-  level, because subclass taxonomies and numbering (e.g. APS Postal
+  level, because subclass taxonomies and numbering (e.g. FIP Postal
   History "2C") are specific to each federation, not to the exhibit
-  itself — the same exhibit can be "2C" under APS and unclassified (or
-  differently classified) under FIP.
+  itself — the same exhibit can be "2C" under FIP and unclassified (or
+  differently classified) under APS.
 - Physical structure: frames, the sheet grid within a frame, and each
   sheet's position, size, and image.
 

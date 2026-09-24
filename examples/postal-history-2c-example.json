@@ -9,12 +9,12 @@
   "rulesets": [
     {
       "name": "APS",
-      "version": "2022",
-      "subclass": "2C"
+      "version": "2022"
     },
     {
       "name": "FIP",
-      "version": "2023"
+      "version": "2023",
+      "subclass": "2C"
     }
   ],
   "synopsis": "Covers and rates documenting mail routes across the isthmus from the earliest colonial post through the opening of the railway.",
