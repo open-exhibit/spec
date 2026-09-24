@@ -1,0 +1,46 @@
+{
+  "spec_version": "0.1.0",
+  "id": "b1f0e2a0-6c1e-4b1a-9a2a-5f6d2e9c1a10",
+  "title": "The 1856 Definitive Issue",
+  "subtitle": "Production, Usage, and Postal History",
+  "author": {
+    "name": "Jane Philatelist",
+    "email": "jane@example.org"
+  },
+  "class": "traditional",
+  "rulesets": [
+    {
+      "name": "FIP",
+      "version": "2023",
+      "subclass": "19th century Europe"
+    }
+  ],
+  "synopsis": "This exhibit traces the 1856 definitive issue from initial printing through its retirement, with emphasis on plate varieties and postal usage on cover.",
+  "frames": [
+    {
+      "frame_number": 1,
+      "grid_rows": 4,
+      "grid_cols": 4,
+      "sheets": [
+        {
+          "position": { "row": 0, "col": 0 },
+          "size": { "preset": "A4" },
+          "image": {
+            "uri": "https://cdn.example.org/exhibits/b1f0e2a0/frame1/sheet1.jpg",
+            "checksum": {
+              "algorithm": "sha256",
+              "value": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a1"
+            }
+          }
+        },
+        {
+          "position": { "row": 0, "col": 1, "colspan": 2 },
+          "size": { "dimensions_mm": { "width": 420, "height": 297 } },
+          "image": {
+            "uri": "https://cdn.example.org/exhibits/b1f0e2a0/frame1/sheet2.jpg"
+          }
+        }
+      ]
+    }
+  ]
+}

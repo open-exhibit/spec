@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/exhibit-format/schema/exhibit.schema.json",
+  "title": "Exhibit",
+  "description": "Application-neutral representation of a philatelic exhibit's structure.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["spec_version", "title", "class", "rulesets", "frames"],
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "description": "Semver of this format, not of the exhibit or any application.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "id": {
+      "type": "string",
+      "description": "Optional stable identifier for this exhibit instance (e.g. a UUID).",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subtitle": {
+      "type": "string"
+    },
+    "author": {
+      "type": "object",
+      "description": "Both fields optional; present the object only if at least one is known.",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "email": { "type": "string", "format": "email" }
+      }
+    },
+    "class": {
+      "type": "string",
+      "description": "Primary FIP-style exhibit class. Shared vocabulary across federations.",
+      "enum": [
+        "traditional",
+        "postal_history",
+        "postal_stationery",
+        "revenue_fiscal",
+        "thematic",
+        "aerophilately",
+        "maximaphily",
+        "open",
+        "one_frame",
+        "youth",
+        "literature"
+      ]
+    },
+    "rulesets": {
+      "type": "array",
+      "description": "Judging rulesets this exhibit targets. An exhibit may target more than one federation (e.g. FIP and APS) at once; each carries its own subclass taxonomy.",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/ruleset_ref" }
+    },
+    "synopsis": {
+      "type": "string",
+      "description": "The exhibit's synopsis/plan. The only free-text content this format carries."
+    },
+    "frames": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/frame" }
+    }
+  },
+  "$defs": {
+    "ruleset_ref": {
+      "type": "object",
+      "description": "Reference to a judging ruleset. The ruleset's own criteria/rubric are not part of this format.",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "e.g. FIP, APS, FEPA, FIAP. Open vocabulary, not enumerated.",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "description": "Ruleset's own version/year identifier, e.g. \"2023\".",
+          "minLength": 1
+        },
+        "subclass": {
+          "type": "string",
+          "description": "Subclass label within `class`, per this ruleset's own taxonomy (e.g. APS Postal History \"2C\"). Meaning and validity are ruleset-specific and not enforced by this schema.",
+          "minLength": 1
+        }
+      }
+    },
+    "frame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["frame_number", "grid_rows", "grid_cols", "sheets"],
+      "properties": {
+        "frame_number": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "1-indexed position of this frame within the exhibit."
+        },
+        "grid_rows": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "grid_cols": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sheets": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/sheet" }
+        }
+      }
+    },
+    "sheet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["position", "size", "image"],
+      "properties": {
+        "position": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["row", "col"],
+          "properties": {
+            "row": { "type": "integer", "minimum": 0 },
+            "col": { "type": "integer", "minimum": 0 },
+            "rowspan": { "type": "integer", "minimum": 1, "default": 1 },
+            "colspan": { "type": "integer", "minimum": 1, "default": 1 }
+          }
+        },
+        "size": {
+          "type": "object",
+          "description": "Preset is a shorthand; dimensions_mm is the escape hatch for non-standard sheet sizes. At least one is required.",
+          "additionalProperties": false,
+          "anyOf": [
+            { "required": ["preset"] },
+            { "required": ["dimensions_mm"] }
+          ],
+          "properties": {
+            "preset": {
+              "type": "string",
+              "enum": ["A4", "A3", "A2", "Square"]
+            },
+            "dimensions_mm": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["width", "height"],
+              "properties": {
+                "width": { "type": "number", "exclusiveMinimum": 0 },
+                "height": { "type": "number", "exclusiveMinimum": 0 }
+              }
+            }
+          }
+        },
+        "image": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["uri"],
+          "properties": {
+            "uri": {
+              "type": "string",
+              "format": "uri"
+            },
+            "checksum": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["algorithm", "value"],
+              "properties": {
+                "algorithm": {
+                  "type": "string",
+                  "enum": ["sha256"]
+                },
+                "value": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

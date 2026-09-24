@@ -1,0 +1,51 @@
+{
+  "spec_version": "0.1.0",
+  "id": "7c2a4e10-9b3f-4d2e-8a1c-2f6b0e4d9a21",
+  "title": "Mail Routes of the Isthmus",
+  "author": {
+    "name": "John Collector"
+  },
+  "class": "postal_history",
+  "rulesets": [
+    {
+      "name": "APS",
+      "version": "2022",
+      "subclass": "2C"
+    },
+    {
+      "name": "FIP",
+      "version": "2023"
+    }
+  ],
+  "synopsis": "Covers and rates documenting mail routes across the isthmus from the earliest colonial post through the opening of the railway.",
+  "frames": [
+    {
+      "frame_number": 1,
+      "grid_rows": 4,
+      "grid_cols": 4,
+      "sheets": [
+        {
+          "position": { "row": 0, "col": 0 },
+          "size": { "preset": "A4" },
+          "image": {
+            "uri": "https://cdn.example.org/exhibits/7c2a4e10/frame1/sheet1.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "frame_number": 2,
+      "grid_rows": 4,
+      "grid_cols": 4,
+      "sheets": [
+        {
+          "position": { "row": 0, "col": 0 },
+          "size": { "preset": "A4" },
+          "image": {
+            "uri": "https://cdn.example.org/exhibits/7c2a4e10/frame2/sheet1.jpg"
+          }
+        }
+      ]
+    }
+  ]
+}
