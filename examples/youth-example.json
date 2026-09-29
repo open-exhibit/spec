@@ -1,0 +1,74 @@
+{
+  "spec_version": "0.2.0",
+  "id": "3d8a1f42-6e0b-4c57-b2a4-9c1e7f5a8d30",
+  "title": "Birds on Stamps",
+  "author": {
+    "name": "Sam Young Collector"
+  },
+  "class": "youth",
+  "youth_age_group": "b",
+  "rulesets": [
+    {
+      "name": "FIP",
+      "version": "2023",
+      "subclass": "thematic"
+    }
+  ],
+  "synopsis_pages": [
+    {
+      "page_number": 1,
+      "image": {
+        "uri": "https://cdn.example.org/exhibits/3d8a1f42/synopsis/1.jpg",
+        "media_type": "image/jpeg"
+      }
+    },
+    {
+      "page_number": 2,
+      "image": {
+        "uri": "https://cdn.example.org/exhibits/3d8a1f42/synopsis/2.png",
+        "media_type": "image/png"
+      }
+    }
+  ],
+  "frames": [
+    {
+      "frame_number": 1,
+      "grid_rows": 2,
+      "grid_cols": 4,
+      "rows": [
+        { "cols": 4, "size": { "preset": "A4" } },
+        { "cols": 3, "size": { "preset": "Square" } }
+      ],
+      "sheets": [
+        {
+          "position": { "row": 0, "col": 0 },
+          "size": { "preset": "A4" },
+          "image": {
+            "uri": "https://cdn.example.org/exhibits/3d8a1f42/frame1/sheet1.jpg",
+            "media_type": "image/jpeg",
+            "checksum": {
+              "algorithm": "sha256",
+              "value": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a1"
+            }
+          }
+        },
+        {
+          "position": { "row": 0, "col": 1, "colspan": 2 },
+          "size": { "preset": "A3" },
+          "image": {
+            "uri": "https://cdn.example.org/exhibits/3d8a1f42/frame1/sheet2.jpg",
+            "media_type": "image/jpeg"
+          }
+        },
+        {
+          "position": { "row": 1, "col": 0 },
+          "size": { "preset": "Square" },
+          "image": {
+            "uri": "https://cdn.example.org/exhibits/3d8a1f42/frame1/sheet3.jpg",
+            "media_type": "image/jpeg"
+          }
+        }
+      ]
+    }
+  ]
+}

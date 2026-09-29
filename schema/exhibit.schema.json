@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.org/exhibit-format/schema/exhibit.schema.json",
+  "$id": "https://raw.githubusercontent.com/open-exhibit/spec/main/schema/exhibit.schema.json",
   "title": "Exhibit",
   "description": "Application-neutral representation of a philatelic exhibit's structure.",
   "type": "object",
@@ -36,7 +36,7 @@
     },
     "class": {
       "type": "string",
-      "description": "Primary FIP-style exhibit class. Shared vocabulary across federations.",
+      "description": "Primary exhibit class. Shared vocabulary across federations: the FIP-style classes plus the classes that exist in APS (or another federation) but not in FIP. Whether a given ruleset accepts a given class is that ruleset's business, not this schema's.",
       "enum": [
         "traditional",
         "postal_history",
@@ -44,12 +44,25 @@
         "revenue_fiscal",
         "thematic",
         "aerophilately",
+        "astrophilately",
         "maximaphily",
+        "picture_postcards",
+        "fdc",
+        "cinderella",
+        "display",
+        "experimental",
+        "illustrated_covers",
+        "topical",
         "open",
         "one_frame",
         "youth",
         "literature"
       ]
+    },
+    "youth_age_group": {
+      "type": "string",
+      "description": "Age group of a youth exhibitor: a, b or c (the youth rules' three bands). Required when class is \"youth\", not allowed for any other class. Which traditional/thematic treatment the youth exhibit follows goes in the ruleset's `subclass`.",
+      "enum": ["a", "b", "c"]
     },
     "rulesets": {
       "type": "array",
@@ -59,7 +72,25 @@
     },
     "synopsis": {
       "type": "string",
-      "description": "The exhibit's synopsis/plan. The only free-text content this format carries."
+      "description": "The exhibit's synopsis/plan as text. Use this OR `synopsis_pages`, not both."
+    },
+    "synopsis_pages": {
+      "type": "array",
+      "description": "The synopsis as page images, for a synopsis that only exists as a scanned or designed document. Use this OR `synopsis`, not both. Pages are in reading order.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["image"],
+        "properties": {
+          "page_number": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "1-indexed page number. Optional: when omitted, the array order is the page order."
+          },
+          "image": { "$ref": "#/$defs/image" }
+        }
+      }
     },
     "frames": {
       "type": "array",
@@ -67,6 +98,18 @@
       "items": { "$ref": "#/$defs/frame" }
     }
   },
+  "allOf": [
+    {
+      "description": "youth_age_group is required for the youth class and forbidden for every other class.",
+      "if": { "properties": { "class": { "const": "youth" } }, "required": ["class"] },
+      "then": { "required": ["youth_age_group"] },
+      "else": { "not": { "required": ["youth_age_group"] } }
+    },
+    {
+      "description": "synopsis and synopsis_pages are alternatives.",
+      "not": { "required": ["synopsis", "synopsis_pages"] }
+    }
+  ],
   "$defs": {
     "ruleset_ref": {
       "type": "object",
@@ -86,8 +129,65 @@
         },
         "subclass": {
           "type": "string",
-          "description": "Subclass label within `class`, per this ruleset's own taxonomy (e.g. APS Postal History \"2C\"). Meaning and validity are ruleset-specific and not enforced by this schema.",
+          "description": "Subclass label within `class`, per this ruleset's own taxonomy (e.g. FIP Postal History \"2C\", APS Revenue \"fiscal_history\", youth \"traditional\"). Meaning and validity are ruleset-specific and not enforced by this schema.",
           "minLength": 1
+        }
+      }
+    },
+    "size": {
+      "type": "object",
+      "description": "Preset is a shorthand; dimensions_mm is the escape hatch for non-standard sizes. At least one is required. When both are present, dimensions_mm wins.",
+      "additionalProperties": false,
+      "anyOf": [
+        { "required": ["preset"] },
+        { "required": ["dimensions_mm"] }
+      ],
+      "properties": {
+        "preset": {
+          "type": "string",
+          "enum": ["A4", "A3", "A2", "Square"]
+        },
+        "dimensions_mm": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["width", "height"],
+          "properties": {
+            "width": { "type": "number", "exclusiveMinimum": 0 },
+            "height": { "type": "number", "exclusiveMinimum": 0 }
+          }
+        }
+      }
+    },
+    "image": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri"],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "uri",
+          "description": "Absolute URI of the image. A consumer fetches it, so it must be reachable by the consumer for as long as the consumer needs it: producers that keep images private should hand out time-limited (signed) URIs."
+        },
+        "media_type": {
+          "type": "string",
+          "description": "Optional hint; the consumer should still check the fetched content.",
+          "enum": ["image/jpeg", "image/png"]
+        },
+        "checksum": {
+          "type": "object",
+          "description": "Recommended: lets a consumer verify what it fetched is what the producer described.",
+          "additionalProperties": false,
+          "required": ["algorithm", "value"],
+          "properties": {
+            "algorithm": {
+              "type": "string",
+              "enum": ["sha256"]
+            },
+            "value": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
         }
       }
     },
@@ -107,7 +207,25 @@
         },
         "grid_cols": {
           "type": "integer",
-          "minimum": 1
+          "minimum": 1,
+          "description": "Columns of the widest row when `rows` is present."
+        },
+        "rows": {
+          "type": "array",
+          "description": "Optional per-row layout, for frames whose rows differ (e.g. a row of four A4 sheets above a row of three Square sheets). rows[i] describes grid row i. When present: rows.length equals grid_rows, grid_cols equals the largest `cols`, and a sheet's position.col + colspan must not exceed its row's `cols`. When absent every row has grid_cols columns of the same base cell size, taken from the sheets' `size`.",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["cols", "size"],
+            "properties": {
+              "cols": { "type": "integer", "minimum": 1 },
+              "size": {
+                "$ref": "#/$defs/size",
+                "description": "Size of this row's base cell."
+              }
+            }
+          }
         },
         "sheets": {
           "type": "array",
@@ -132,56 +250,8 @@
             "colspan": { "type": "integer", "minimum": 1, "default": 1 }
           }
         },
-        "size": {
-          "type": "object",
-          "description": "Preset is a shorthand; dimensions_mm is the escape hatch for non-standard sheet sizes. At least one is required.",
-          "additionalProperties": false,
-          "anyOf": [
-            { "required": ["preset"] },
-            { "required": ["dimensions_mm"] }
-          ],
-          "properties": {
-            "preset": {
-              "type": "string",
-              "enum": ["A4", "A3", "A2", "Square"]
-            },
-            "dimensions_mm": {
-              "type": "object",
-              "additionalProperties": false,
-              "required": ["width", "height"],
-              "properties": {
-                "width": { "type": "number", "exclusiveMinimum": 0 },
-                "height": { "type": "number", "exclusiveMinimum": 0 }
-              }
-            }
-          }
-        },
-        "image": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["uri"],
-          "properties": {
-            "uri": {
-              "type": "string",
-              "format": "uri"
-            },
-            "checksum": {
-              "type": "object",
-              "additionalProperties": false,
-              "required": ["algorithm", "value"],
-              "properties": {
-                "algorithm": {
-                  "type": "string",
-                  "enum": ["sha256"]
-                },
-                "value": {
-                  "type": "string",
-                  "minLength": 1
-                }
-              }
-            }
-          }
-        }
+        "size": { "$ref": "#/$defs/size" },
+        "image": { "$ref": "#/$defs/image" }
       }
     }
   }

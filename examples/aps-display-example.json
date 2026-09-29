@@ -1,0 +1,28 @@
+{
+  "spec_version": "0.2.0",
+  "title": "Fifty Years of Airmail Design",
+  "class": "display",
+  "rulesets": [
+    {
+      "name": "APS",
+      "version": "2022"
+    }
+  ],
+  "synopsis": "A display exhibit following how airmail stamps and covers were designed and used from 1918 onward.",
+  "frames": [
+    {
+      "frame_number": 1,
+      "grid_rows": 4,
+      "grid_cols": 4,
+      "sheets": [
+        {
+          "position": { "row": 0, "col": 0 },
+          "size": { "preset": "A4" },
+          "image": {
+            "uri": "https://cdn.example.org/exhibits/airmail/frame1/sheet1.jpg"
+          }
+        }
+      ]
+    }
+  ]
+}
