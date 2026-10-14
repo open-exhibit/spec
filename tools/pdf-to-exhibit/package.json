@@ -1,0 +1,22 @@
+{
+  "name": "open-exhibit-pdf-to-exhibit",
+  "version": "0.1.0",
+  "description": "Split a PDF into JPEG pages, detect sheet sizes, emit an Open Exhibit document",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.11",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "pdfjs-dist": "^6.4.299"
+  },
+  "private": true,
+  "bin": {
+    "pdf-to-exhibit": "pdf-to-exhibit.mjs"
+  },
+  "engines": {
+    "node": ">=22.13"
+  }
+}
