@@ -61,6 +61,8 @@ examples/
   youth-example.json          youth age group, mixed row sizes, synopsis as page images
   aps-display-example.json    an APS-only class
   invalid/                    documents the schema must reject (useful as validator tests)
+tools/
+  pdf-to-exhibit/       Node.js tool: PDF -> JPEG pages + Open Exhibit document
 README.md
 CHANGELOG.md
 LICENSE
@@ -120,4 +122,40 @@ that `rows.length` equals `grid_rows`, that a sheet fits within its row's
 `cols`, and that sheets don't overlap. They are documented on the fields.
 
 A reference parser/SDK is not planned for v0 — the format is intentionally
-just data + schema for now.
+just data + schema for now. The one tool in this repo,
+[pdf-to-exhibit](#generating-a-starting-point-from-a-pdf), is a convenience
+for producers, not a normative part of the format.
+
+## Generating a starting point from a PDF
+
+[`tools/pdf-to-exhibit`](tools/pdf-to-exhibit/) is a small Node.js command-line
+tool that turns a PDF of an exhibit into a ready-to-edit Open Exhibit document:
+
+```
+cd tools/pdf-to-exhibit && npm install
+node pdf-to-exhibit.mjs exhibit.pdf --title "Birds on Stamps" --class thematic   --ruleset FIP:2023 --base-uri https://cdn.example.org/exhibits/abc --out out
+```
+
+It writes:
+
+- one JPEG per PDF page (`out/pages/page-001.jpg`, …);
+- `out/exhibit.json`, validated against the schema, with an `image` (URI,
+  `media_type`, sha256 `checksum`) for every sheet;
+- `out/analysis.json`, the per-page detection details.
+
+For each page it detects the sheet size — `A4`, `A3`, `A2`, `Square`, or custom
+`dimensions_mm` for anything else, portrait or landscape — from the page's
+aspect ratio and physical size, and reports a confidence so doubtful pages can
+be reviewed. It then lays the sheets out into frames (several sheet sizes can
+share a row, using `colspan`).
+
+Treat the result as a **starting point, not a finished document**. The frame
+layout is a heuristic (columns per row and rows per frame are configurable, and
+your real frames may differ), the sheet order is the PDF's page order, and the
+tool knows nothing about the exhibit's synopsis, author details or
+subclass beyond what you pass on the command line. Review and adjust
+`exhibit.json` before publishing it. Because the output is plain JSON that
+follows the schema, the same approach is a good base for automating spec
+generation in other pipelines — see the tool's
+[README](tools/pdf-to-exhibit/README.md) for the options and the detection
+rules.
